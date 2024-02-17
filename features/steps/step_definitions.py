@@ -8,8 +8,8 @@ import threading
 import os
 from hal_auto_check.halcion_auto_calulator import loadhalurl, save_to_file
 # Assuming the loadhalurl and save_to_file functions are defined elsewhere and imported here
-script_dir = os.path.dirname(os.path.abspath(__file__))
-URL=os.path.join(script_dir, '..', '..', 'test-website.url')
+script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+URL=os.path.join(script_dir, 'test-website.url')
 PAGE_OPENED = False
 
 
