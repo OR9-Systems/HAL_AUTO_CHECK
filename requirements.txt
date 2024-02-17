@@ -1,3 +1,7 @@
 behave
 selenium
 pyperclip
+sphinx>=4.2.0
+myst-parser
+furo
+nbsphinx
