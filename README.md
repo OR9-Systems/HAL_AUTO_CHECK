@@ -16,6 +16,7 @@ To install HAL_AUTO_CHECK, follow these steps:
 |--------------|-----------------------------------------|
 | .[behave]    | Installs the package with additional dependencies required for Behave testing. |
 | .[docs]      | Installs the package with additional dependencies required for generating documentation. |
+| .            | Installs the base package requirements. |
 
 For example, to install with Behave dependencies:
 
@@ -28,6 +29,13 @@ To install with documentation dependencies:
 ```bash
 pip install -e .[docs]
 ```
+
+3. Run Post Install Script To Download Selenium iE Packages and make sure internet Explorer is installed
+
+```bash
+post-install
+```
+
 
 This will install HAL_AUTO_CHECK in editable mode, allowing you to make changes to the code and immediately see the effects without needing to reinstall the package.
 
