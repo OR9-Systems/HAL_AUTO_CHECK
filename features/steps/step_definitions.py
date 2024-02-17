@@ -5,9 +5,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 import pyperclip
 import threading
+import os
 from hal_auto_check.halcion_auto_calulator import loadhalurl, save_to_file
 # Assuming the loadhalurl and save_to_file functions are defined elsewhere and imported here
-URL='../test-website.url'
+script_dir = os.path.dirname(os.path.abspath(__file__))
+URL=os.path.join(script_dir, '..', '..', 'test-website.url')
 PAGE_OPENED = False
 
 
@@ -36,7 +38,7 @@ def open_webpage(context):
 
     context.driver = webdriver.Edge(options=context.ie_options)
     context.driver.set_page_load_timeout(10)
-    halurl = loadhalurl(URL)
+    halurl = URL
     try:
         timeout_thread = threading.Thread(target=wait_for_page_load, args=(context.driver, 10))  # Timeout set to 10 seconds
         timeout_thread.start()
