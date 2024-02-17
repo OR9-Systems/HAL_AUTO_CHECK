@@ -1,0 +1,53 @@
+name: Deploy Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  cucumber-testing:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'  # Replace '3.x' with the specific version of Python you need
+
+      - name: Install Dependencies
+        run: |
+          python -m venv venv
+          .\venv\Scripts\activate
+          python -m pip install -r requirements.txt
+          pip install -e .[behave]  # Assuming your project supports extras_require with 'behave'
+
+      - name: Run Post-Install Script
+        run: |
+          .\venv\Scripts\activate
+          post-install
+          Enable-WindowsOptionalFeature -FeatureName Internet-Explorer-Optional-amd64 –Online -NoRestart
+
+      - name: Create test-website.url file
+        run: |
+          echo "[{000214A0-0000-0000-C000-000000000046}]" > test-website.url
+          echo "Prop3=19,11" >> test-website.url
+          echo "[InternetShortcut]" >> test-website.url
+          echo "IDList=" >> test-website.url
+          echo "URL=https://or9.ca/" >> test-website.url
+
+      - name: Run Behave Tests
+        run: |
+          .\venv\Scripts\activate
+          behave
+
+      - name: Cucumber Report Annotations
+        uses: deblockt/cucumber-report-annotations-action@v1.7
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          path: "**/cucumber-report.json"

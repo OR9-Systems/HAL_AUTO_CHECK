@@ -1,6 +1,6 @@
-Feature: Save text from a halcion page
+Feature: Save text from a web page
 
-  Scenario: User needs to save text from halcion
-    Given I opened the halcion page
-    When I copy text from halcion
-    Then I should be able to save the text to an input text file name of my choosing exp: "copiedText.txt" file
+  Scenario: User needs to save text from webpage
+    Given I have opened the webpage
+    When I copy text from the webpage
+    Then I should be able to save the text to a "copiedText.txt" file
