@@ -28,7 +28,7 @@ def wait_for_page_load(driver,url,timeout):
     timer = threading.Timer(timeout, timeout_error)
     try:
         timer.start()
-        driver.get(url,timeout=timeout)  # Wait for the page to load within the specified timeout
+        driver.get(url)  # Wait for the page to load within the specified timeout
     finally:
         timer.cancel()
 
