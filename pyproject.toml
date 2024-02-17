@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hal_auto_check"
+version = "0.1.0"
+description = "Scrapes text from a webpage"
+authors = [{ name = "Orion Nelson", email = "me@or9.ca" }]
+dependencies = [
+    "selenium",
+    "pyperclip",
+    "requests",
+    "toml"
+]
+
+[project.optional-dependencies]
+behave = [
+    "behave",
+    "selenium",
+    "pyperclip",
+    "requests",
+    "toml"
+]
+docs = [
+    "sphinx>=4.2.0",
+    "myst-parser",
+    "furo",
+    "nbsphinx",
+    "selenium",
+    "pyperclip",
+    "requests",
+    "toml"
+]
+
+[tool.hal-auto-check]
+iedriver-url = "https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.14.0/IEDriverServer_x64_4.14.0.zip"
+
+[tool.setuptools]
+packages = ["hal_auto_check", "features"]
+
+[project.entry-points.console_scripts]
+post-install = "hal_auto_check.post_install_script:main"

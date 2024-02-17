@@ -4,9 +4,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 import pyperclip
 import time
-from halcion_auto_calulator import loadhalurl, save_to_file
+from hal_auto_check.halcion_auto_calulator import loadhalurl, save_to_file
 # Assuming the loadhalurl and save_to_file functions are defined elsewhere and imported here
-
+URL='../../test-website.url'
 @given('I have opened the webpage')
 def open_webpage(context):
     """
@@ -20,7 +20,7 @@ def open_webpage(context):
     context.ie_options.ignore_protected_mode_settings = True
 
     context.driver = webdriver.Edge(options=context.ie_options)
-    halurl = loadhalurl()
+    halurl = loadhalurl(URL)
     context.driver.get(halurl)
     time.sleep(5)  # Wait for the page to load
 

@@ -7,14 +7,14 @@ import time
 IMP_LINE = "URL="
 SHORTCUT_NAME = "Halcion.url"
 
-def loadhalurl():
+def loadhalurl(url=SHORTCUT_NAME):
     """
     Reads the URL from a shortcut file.
 
     :return: The URL extracted from the file.
     :rtype: str
     """
-    with open(SHORTCUT_NAME, 'r+') as h_file:
+    with open(url, 'r+') as h_file:
         important_line = [line for line in h_file.readlines() if IMP_LINE in line][0]
     return important_line.strip(IMP_LINE)
 
