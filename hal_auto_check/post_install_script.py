@@ -23,8 +23,7 @@ def download_file(url, dest_path):
         sys.exit("Error downloading file: " + url)
 
 def extract_to_venv_lib(zip_path, venv_path):
-    if os.path.exists(venv_path,"Scripts"):
-        lib_path = os.path.join(venv_path, 'Scripts')
+    lib_path = os.path.join(venv_path, 'Scripts')
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(lib_path)
 

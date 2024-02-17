@@ -31,6 +31,7 @@ jobs:
         run: |
           .\venv\Scripts\activate
           post-install
+          Enable-WindowsOptionalFeature -FeatureName Internet-Explorer-Optional-amd64 –Online -NoRestart
 
       - name: Create test-website.url file
         run: |
