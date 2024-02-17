@@ -2,7 +2,7 @@ from behave import given, when, then
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 import pyperclip
 import threading
 import os
@@ -13,15 +13,24 @@ URL=os.path.join(script_dir, 'test-website.url')
 PAGE_OPENED = False
 
 
-def wait_for_page_load(driver, timeout):
+def timeout_error():
+    """
+    Function to be called when the timeout is reached.
+    """
+    raise WebDriverException("Page load timed out after 10 seconds")
+
+def wait_for_page_load(driver,url,timeout):
     """
     Function to wait for the page to load within a specified timeout.
     """
+    print(f"Loading Url :{url}")
+    driver.set_page_load_timeout(timeout)
+    timer = threading.Timer(timeout, timeout_error)
     try:
-        driver.get(timeout=timeout)  # Wait for the page to load within the specified timeout
-    except TimeoutException:
-        # Fail the step if a TimeoutException is caught
-        assert False, "Failed to load the webpage within the specified timeout."
+        timer.start()
+        driver.get(url,timeout=timeout)  # Wait for the page to load within the specified timeout
+    finally:
+        timer.cancel()
 
 
 @given('I have opened the webpage')
@@ -37,14 +46,9 @@ def open_webpage(context):
     context.ie_options.ignore_protected_mode_settings = True
 
     context.driver = webdriver.Edge(options=context.ie_options)
-    context.driver.set_page_load_timeout(10)
     halurl = loadhalurl(URL)
     try:
-        timeout_thread = threading.Thread(target=wait_for_page_load, args=(context.driver, 10))  # Timeout set to 10 seconds
-        timeout_thread.start()
-        context.driver.get(halurl)
-        PAGE_OPENED = True
-        timeout_thread.join()
+        wait_for_page_load(context.driver, halurl,10)
     except TimeoutException:
         # Fail the step if a TimeoutException is caught
         assert False, "Failed to load the webpage within the specified timeout."
