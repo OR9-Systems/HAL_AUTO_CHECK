@@ -42,11 +42,14 @@ def open_webpage(context):
     edge_options = Options()
     edge_options.use_chromium = True  # Specify using Chromium-based Edge
     # Set the desired page load strategy
+    global driver
 
     driver = webdriver.Edge(options=edge_options)
     halurl = loadhalurl(URL)
     try:
-        wait_for_page_load(driver, halurl,10)
+        wait_for_page_load(driver, halurl,20)
+        global PAGE_OPENED
+        PAGE_OPENED = True
     except TimeoutException:
         # Fail the step if a TimeoutException is caught
         assert False, "Failed to load the webpage within the specified timeout."
@@ -64,7 +67,10 @@ def copy_text_from_webpage(context):
         raise Exception("Webpage was not successfully opened. Skipping scenario.")
     context.copied_text = ""
     try:
-        actions = ActionChains(context.driver)
+        actions = ActionChains(driver)
+        window_handles = driver.window_handles
+        halcion_handle = window_handles[-1]
+        driver.switch_to.window(halcion_handle)
         actions.key_down(Keys.CONTROL).send_keys('a').send_keys('c').key_up(Keys.CONTROL).perform()
         context.copied_text = pyperclip.paste()
     except Exception as e:
