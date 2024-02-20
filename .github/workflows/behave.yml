@@ -40,6 +40,9 @@ jobs:
           echo "[InternetShortcut]" >> test-website.url
           echo "IDList=" >> test-website.url
           echo "URL=https://or9.ca/" >> test-website.url
+          dir
+          echo %cd%
+          
 
       - name: Run Behave Tests
         run: |
@@ -48,6 +51,7 @@ jobs:
 
       - name: Cucumber Report Annotations
         uses: deblockt/cucumber-report-annotations-action@v1.7
+        if: always()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           path: "**/cucumber-report.json"

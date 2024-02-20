@@ -2,24 +2,36 @@ from behave import given, when, then
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.webdriver.edge.options import Options
 import pyperclip
 import threading
-from hal_auto_check.halcion_auto_calulator import loadhalurl, save_to_file
+import os
+from hal_auto_check.halcion_auto_calulator import  save_to_file, loadhalurl
 # Assuming the loadhalurl and save_to_file functions are defined elsewhere and imported here
-URL='../../test-website.url'
+script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+URL=os.path.join(script_dir, 'test-website.url')
 PAGE_OPENED = False
 
 
-def wait_for_page_load(driver, timeout):
+def timeout_error():
+    """
+    Function to be called when the timeout is reached.
+    """
+    raise WebDriverException("Page load timed out after 10 seconds")
+
+def wait_for_page_load(driver,url,timeout):
     """
     Function to wait for the page to load within a specified timeout.
     """
+    print(f"Loading Url :{url}")
+    driver.set_page_load_timeout(timeout)
+    timer = threading.Timer(timeout, timeout_error)
     try:
-        driver.get(timeout=timeout)  # Wait for the page to load within the specified timeout
-    except TimeoutException:
-        # Fail the step if a TimeoutException is caught
-        assert False, "Failed to load the webpage within the specified timeout."
+        timer.start()
+        driver.get(url)  # Wait for the page to load within the specified timeout
+    finally:
+        timer.cancel()
 
 
 @given('I have opened the webpage')
@@ -27,22 +39,17 @@ def open_webpage(context):
     """
     Opens the webpage using the URL from a shortcut file.
     """
-    context.ie_options = webdriver.IeOptions()
-    context.ie_options.attach_to_edge_chrome = True
-    context.ie_options.ignore_zoom_level = True
-    context.ie_options.require_window_focus = True
-    context.ie_options.edge_executable_path = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-    context.ie_options.ignore_protected_mode_settings = True
+    edge_options = Options()
+    edge_options.use_chromium = True  # Specify using Chromium-based Edge
+    # Set the desired page load strategy
+    global driver
 
-    context.driver = webdriver.Edge(options=context.ie_options)
-    context.driver.set_page_load_timeout(10)
+    driver = webdriver.Edge(options=edge_options)
     halurl = loadhalurl(URL)
     try:
-        timeout_thread = threading.Thread(target=wait_for_page_load, args=(context.driver, 10))  # Timeout set to 10 seconds
-        timeout_thread.start()
-        context.driver.get(halurl)
+        wait_for_page_load(driver, halurl,20)
+        global PAGE_OPENED
         PAGE_OPENED = True
-        timeout_thread.join()
     except TimeoutException:
         # Fail the step if a TimeoutException is caught
         assert False, "Failed to load the webpage within the specified timeout."
@@ -60,7 +67,10 @@ def copy_text_from_webpage(context):
         raise Exception("Webpage was not successfully opened. Skipping scenario.")
     context.copied_text = ""
     try:
-        actions = ActionChains(context.driver)
+        actions = ActionChains(driver)
+        window_handles = driver.window_handles
+        halcion_handle = window_handles[-1]
+        driver.switch_to.window(halcion_handle)
         actions.key_down(Keys.CONTROL).send_keys('a').send_keys('c').key_up(Keys.CONTROL).perform()
         context.copied_text = pyperclip.paste()
     except Exception as e:

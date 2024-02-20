@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.edge.options import Options
 import pyperclip
 import time
 
@@ -41,28 +42,23 @@ def print_action_chain(driver, filename):
     :return: None
     """
     actions = ActionChains(driver)
+    window_handles = driver.window_handles
+    halcion_handle = window_handles[-1]
+    driver.switch_to.window(halcion_handle)
+    print("Switched to Window")
     actions.key_down(Keys.CONTROL).send_keys('a').send_keys('c').key_up(Keys.CONTROL).perform()
     copied_text = pyperclip.paste()
     print(copied_text)
     save_to_file(copied_text, filename)
 
 if __name__ == "__main__":
-    ie_options = webdriver.IeOptions()
-    ie_options.attach_to_edge_chrome = True
-    ie_options.ignore_zoom_level = True
-    ie_options.require_window_focus = True
-    ie_options.edge_executable_path = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-    ie_options.ignore_protected_mode_settings = True
-
-    driver = webdriver.Edge(options=ie_options)
+    edge_options = Options()
+    edge_options.use_chromium = True  # Specify using Chromium-based Edge
+    # Set the desired page load strategy
+    driver = webdriver.Edge(options=edge_options)
     halurl = loadhalurl()
     driver.get(halurl)
-    input("Press Enter after the page has loaded.")
     print("Executing Action Chain")
-    window_handles = driver.window_handles
-    halcion_handle = window_handles[-1]
-    driver.switch_to.window(halcion_handle)
-    print("Switched to Window")
     time.sleep(1)
 
     while True:
