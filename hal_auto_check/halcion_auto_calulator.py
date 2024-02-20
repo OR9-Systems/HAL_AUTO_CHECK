@@ -51,10 +51,10 @@ def print_action_chain(driver, filename):
     save_to_file(copied_text, filename)
 
 if __name__ == "__main__":
-     edge_options = Options()
+    edge_options = Options()
     edge_options.use_chromium = True  # Specify using Chromium-based Edge
     # Set the desired page load strategy
-    driver = webdriver.Edge(options=ie_options)
+    driver = webdriver.Edge(options=edge_options)
     halurl = loadhalurl()
     driver.get(halurl)
     print("Executing Action Chain")
