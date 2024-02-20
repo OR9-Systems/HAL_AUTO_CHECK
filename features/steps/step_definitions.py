@@ -43,7 +43,7 @@ def open_webpage(context):
     edge_options.use_chromium = True  # Specify using Chromium-based Edge
     # Set the desired page load strategy
 
-    driver = webdriver.Edge(options=context.edge_options)
+    driver = webdriver.Edge(options=edge_options)
     halurl = loadhalurl(URL)
     try:
         wait_for_page_load(driver, halurl,10)
