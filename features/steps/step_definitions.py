@@ -38,17 +38,14 @@ def open_webpage(context):
     """
     Opens the webpage using the URL from a shortcut file.
     """
-    context.ie_options = webdriver.IeOptions()
-    context.ie_options.attach_to_edge_chrome = True
-    context.ie_options.ignore_zoom_level = True
-    context.ie_options.require_window_focus = True
-    context.ie_options.edge_executable_path = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-    context.ie_options.ignore_protected_mode_settings = True
+    edge_options = Options()
+    edge_options.use_chromium = True  # Specify using Chromium-based Edge
+    # Set the desired page load strategy
 
-    context.driver = webdriver.Edge(options=context.ie_options)
+    driver = webdriver.Edge(options=context.edge_options)
     halurl = loadhalurl(URL)
     try:
-        wait_for_page_load(context.driver, halurl,10)
+        wait_for_page_load(driver, halurl,10)
     except TimeoutException:
         # Fail the step if a TimeoutException is caught
         assert False, "Failed to load the webpage within the specified timeout."
